@@ -1,0 +1,6 @@
+data/dev.alosarjos.Rango.desktop.in.in
+data/dev.alosarjos.Rango.gschema.xml.in
+data/dev.alosarjos.Rango.metainfo.xml.in.in
+data/resources/ui/shortcuts.ui
+data/resources/ui/window.ui
+src/application.rs
