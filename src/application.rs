@@ -7,7 +7,7 @@ use gtk::subclass::prelude::*;
 use gtk::{gdk, gio, glib};
 
 use crate::config::{APP_ID, PKGDATADIR, PROFILE, VERSION};
-use crate::window::ExampleApplicationWindow;
+use crate::window::RangoApplicationWindow;
 
 mod imp {
     use super::*;
@@ -15,22 +15,22 @@ mod imp {
     use once_cell::sync::OnceCell;
 
     #[derive(Debug, Default)]
-    pub struct ExampleApplication {
-        pub window: OnceCell<WeakRef<ExampleApplicationWindow>>,
+    pub struct RangoApplication {
+        pub window: OnceCell<WeakRef<RangoApplicationWindow>>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for ExampleApplication {
-        const NAME: &'static str = "ExampleApplication";
-        type Type = super::ExampleApplication;
+    impl ObjectSubclass for RangoApplication {
+        const NAME: &'static str = "RangoApplication";
+        type Type = super::RangoApplication;
         type ParentType = gtk::Application;
     }
 
-    impl ObjectImpl for ExampleApplication {}
+    impl ObjectImpl for RangoApplication {}
 
-    impl ApplicationImpl for ExampleApplication {
+    impl ApplicationImpl for RangoApplication {
         fn activate(&self, app: &Self::Type) {
-            debug!("GtkApplication<ExampleApplication>::activate");
+            debug!("GtkApplication<RangoApplication>::activate");
 
             if let Some(window) = self.window.get() {
                 let window = window.upgrade().unwrap();
@@ -39,7 +39,7 @@ mod imp {
                 return;
             }
 
-            let window = ExampleApplicationWindow::new(app);
+            let window = RangoApplicationWindow::new(app);
             self.window
                 .set(window.downgrade())
                 .expect("Window already set.");
@@ -48,7 +48,7 @@ mod imp {
         }
 
         fn startup(&self, app: &Self::Type) {
-            debug!("GtkApplication<ExampleApplication>::startup");
+            debug!("GtkApplication<RangoApplication>::startup");
             self.parent_startup(app);
 
             // Set icons for shell
@@ -60,30 +60,29 @@ mod imp {
         }
     }
 
-    impl GtkApplicationImpl for ExampleApplication {}
+    impl GtkApplicationImpl for RangoApplication {}
 }
 
 glib::wrapper! {
-    pub struct ExampleApplication(ObjectSubclass<imp::ExampleApplication>)
+    pub struct RangoApplication(ObjectSubclass<imp::RangoApplication>)
         @extends gio::Application, gtk::Application,
         @implements gio::ActionMap, gio::ActionGroup;
 }
 
-impl ExampleApplication {
-    pub fn new() -> Self {
+impl Default for RangoApplication {
+    fn default() -> Self {
         glib::Object::new(&[
             ("application-id", &Some(APP_ID)),
             ("flags", &gio::ApplicationFlags::empty()),
-            (
-                "resource-base-path",
-                &Some("/dev/alosarjos/Rango/"),
-            ),
+            ("resource-base-path", &Some("/dev/alosarjos/Rango/")),
         ])
         .expect("Application initialization failed...")
     }
+}
 
-    fn main_window(&self) -> ExampleApplicationWindow {
-        let imp = imp::ExampleApplication::from_instance(self);
+impl RangoApplication {
+    fn main_window(&self) -> RangoApplicationWindow {
+        let imp = imp::RangoApplication::from_instance(self);
         imp.window.get().unwrap().upgrade().unwrap()
     }
 
